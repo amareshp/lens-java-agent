@@ -19,3 +19,9 @@ This utility uses javaassist library to create the instrumentation agent.
 **Sample contents of an instr_file**
 com.ap
 com.ebay.a
+
+## Building from source - Modify the agent
+You need to add **javaassist** library to the lens-agent project to be able to build it. You can make changes to the agent and transformer code. Export the project again to create a new agent jar file.  
+When you run the main method from the lens-sample project use the new agent path.  
+JVM options -  
+**_-javaagent:<agent_jar_path>  -DINSTR_FILE=<path_to_instr_file>_**
