@@ -15,7 +15,12 @@ This utility uses javaassist library to create the instrumentation agent.
 * The program take a JVM parameter to specify location of the agent log file. Specify **_-DLOG_FILE=<path_to_log_file>_**
 * Run the sample application **_lens-sample/src/com/ap/App.java_**
 * Example VM parameters **_-javaagent:D:\\lens-agent\\lens-agent.jar -DINSTR_FILE=D:\\lens-agent\\instr_file.txt -DLOG_FILE=D:\\lens-agent\\lens-agent.log_**
-* Now you should see the method calls printed out to system console.
+* Now you should see the method calls printed out to the log file specified in VM parameters.
+
+## Default behavior
+* The VM Option **_-javaagent:<agent_jar_path>_** is mandatory.
+* If you do not specify the VM Option **_-DINSTR_FILE=<path_to_instr_file>_**, it looks for a file called **instr_file.txt** in the user's home directory.
+* If you do not specify the VM Option **_-DLOG_FILE=<path_to_log_file>_**, it generates the log file named **lens_log_file.log** in the user's home directory.
 
 ## Sample instr_file contains list of packages to track. 
 **Sample contents of an instr_file**
