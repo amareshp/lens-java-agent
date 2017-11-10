@@ -1,7 +1,6 @@
 package com.ap;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
@@ -20,11 +19,22 @@ public class DemoClassFileTransformer implements ClassFileTransformer {
         byte[] bytecode = classfileBuffer;
         String fullClassName;
         boolean inPackage;
+        FileWriter fw;
+        BufferedWriter bw;
+        PrintWriter out = null;
         try {
             String instrFile = System.getProperty("INSTR_FILE");
+            String logToFile = System.getProperty("LOG_FILE");
             if(instrFile == null) {
                 instrFile = System.getProperty("user.home") + System.getProperty("file.separator") + "instr_file.txt";
             }
+            if(logToFile == null) {
+                logToFile = System.getProperty("user.home") + System.getProperty("file.separator") + "lens_log_file.log";
+            }
+            fw = new FileWriter(logToFile, true);
+            bw = new BufferedWriter(fw);
+            out = new PrintWriter(bw);
+
             List<String> packageList = ReadFile.readLines(instrFile);
             ClassPool cPool = ClassPool.getDefault();
             CtClass ctClass = cPool.makeClass(new ByteArrayInputStream(bytecode));
@@ -32,7 +42,8 @@ public class DemoClassFileTransformer implements ClassFileTransformer {
             for (CtMethod ctClassMethod : ctClassMethods) {
                 fullClassName = ctClassMethod.getDeclaringClass().getName();
                 if(isClassInPackage(fullClassName, packageList)) {
-                    System.out.println( "[LENS-AGENT]: " + ctClassMethod.getLongName() );
+                    //System.out.println( "[LENS-AGENT]: " + ctClassMethod.getLongName() );
+                    out.println( "[LENS-AGENT]: " + ctClassMethod.getLongName() );
                     //System.out.println( "[LENS-AGENT]: " + ctClassMethod.getDeclaringClass().getName() );
 
                     //Log execution time
@@ -53,6 +64,10 @@ public class DemoClassFileTransformer implements ClassFileTransformer {
             throw new IllegalClassFormatException(e.getMessage());
         } catch (CannotCompileException e) {
             throw new IllegalClassFormatException(e.getMessage());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            out.close();
         }
         return bytecode;
     }
