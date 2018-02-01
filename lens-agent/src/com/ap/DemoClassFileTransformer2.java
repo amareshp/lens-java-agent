@@ -63,11 +63,16 @@ public class DemoClassFileTransformer2 implements ClassFileTransformer {
                     ctClassMethod.instrument(new ExprEditor() {
                         public void edit(final MethodCall m) throws CannotCompileException {
                           try {
+                              List<javassist.bytecode.CodeAttribute> attributes = ctClassMethod.getMethodInfo().getAttributes();
+                              StringBuilder attrStr = new StringBuilder();
+                              for (javassist.bytecode.CodeAttribute attribute : attributes) {
+                                  attrStr.append( " " + new String(m.getMethodName()) + " line: " + m.getLineNumber() + " ");
+                              }
                             m.replace("{" +
                                 "long startMs = System.currentTimeMillis(); " +
                                 "$_ = $proceed($$); " +
                                 "long endMs = System.currentTimeMillis();" +
-                                "if((endMs-startMs) > 100) System.out.println(\"" + ctClassMethod.getLongName() + " Executed in ms: \" + (endMs-startMs) );" +
+                                "if((endMs-startMs) > 100) System.out.println(\"" + ctClassMethod.getLongName() + attrStr + " Executed in ms: \" + (endMs-startMs) );" +
                                 "}");
                           } catch (Exception ex) {
                             ex.printStackTrace();
