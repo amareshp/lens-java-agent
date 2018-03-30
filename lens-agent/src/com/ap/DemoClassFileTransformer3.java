@@ -115,7 +115,7 @@ public class DemoClassFileTransformer3 implements ClassFileTransformer {
     //System.out.println( "from agent - class: " + fullName );
     boolean result = false;
     for(String package1 : trackList) {
-      if(name.startsWith(package1)) {
+      if(name.contains(package1)) {
         result = true;
         //System.out.println("Found a package to instrument...");
         break;
